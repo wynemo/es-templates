@@ -1,0 +1,24 @@
+es1.zip里有一个nodes文件夹
+elasticsearch版本为7.3.2
+
+1.
+#创建文件夹
+mkdir /data/es1/
+#需要把 nodes文件夹 放到/data/es1/ 并修改权限
+chmod -R 777 /data/es1
+
+#用docker跑es
+docker rm elasticsearch my_kibana
+docker network create my_net
+docker run --network my_net --name elasticsearch -d -p 9200:9200  -p 9300:9300  -e "discovery.type=single-node" -e "ES_JAVA_OPTS=-Xms1g -Xmx1g" -v /data/es1/:/usr/share/elasticsearch/data/  elasticsearch:7.3.2
+
+#kibana （可选）
+docker run --network my_net -d --name my_kibana --link elasticsearch -p 5601:5601 kibana:7.3.2
+
+
+
+2. config.json可配置es的host， port
+ "elastic_setting": {"default":{"hosts":[{"host":"127.0.0.1","port":9200}],"max_retries":0,"timeout":120}},
+默认为127.0.0.1
+
+
